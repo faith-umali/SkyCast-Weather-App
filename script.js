@@ -27,7 +27,6 @@ function getWeather() {
       const humidity = forecast.main.humidity;
       const rainVolume = forecast.rain && forecast.rain["3h"] ? forecast.rain["3h"] : 0;
 
-      // Interpretation
       let interpretedWeather = "Unknown";
       if (rainVolume > 0 || weatherDesc.includes("rain") || weatherDesc.includes("shower")) {
         interpretedWeather = "Rainy";
@@ -73,7 +72,6 @@ function getWeather() {
     });
 }
 
-// Extra UX Enhancements
 document.getElementById("cityInput").addEventListener("keypress", function(e) {
   if (e.key === "Enter") {
     getWeather();
