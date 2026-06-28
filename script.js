@@ -80,5 +80,9 @@ document.getElementById("cityInput").addEventListener("keypress", function(e) {
 
 window.onload = () => {
   document.getElementById("cityInput").focus();
+
+  const sunrise = new Date(data.city.sunrise * 1000);
+
+const sunset = new Date(data.city.sunset * 1000);
 };
 
