@@ -21,10 +21,10 @@ function getWeather() {
     })
     .then((data) => {
       const forecast = data.list[0]; // First 3-hour forecast
-       <div class="box">const weatherMain = forecast.weather[0].main.toLowerCase();
-       <div class="box">const weatherDesc = forecast.weather[0].description;
-       <div class="box">const temperature = forecast.main.temp;
-       <div class="box">const humidity = forecast.main.humidity;
+       const weatherMain = forecast.weather[0].main.toLowerCase();
+       const weatherDesc = forecast.weather[0].description;
+       const temperature = forecast.main.temp;
+       const humidity = forecast.main.humidity;
       const rainVolume = forecast.rain && forecast.rain["3h"] ? forecast.rain["3h"] : 0;
 
       let interpretedWeather = "Unknown";
