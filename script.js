@@ -1,83 +1,180 @@
-function getWeather() {
-  const city = document.getElementById("cityInput").value.trim();
-  const apiKey = "f0b9a524d07449c474ea5b8549fa74dd";
-  const url = `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${apiKey}&units=metric`;
+const apiKey = "f0b9a524d07449c474ea5b8549fa74dd";
 
-  const resultDiv = document.getElementById("weatherResult");
+const weatherResult = document.getElementById("weatherResult");
+const forecastDiv = document.getElementById("forecast");
+const loading = document.getElementById("loading");
+const tip = document.getElementById("tip");
+const historyList = document.getElementById("historyList");
+const favoriteList = document.getElementById("favoriteList");
+const clock = document.getElementById("clock");
+const greeting = document.getElementById("greeting");
 
-  if (city === "") {
-    resultDiv.innerHTML = `<p style="color:red;">Please enter a city name.</p>`;
-    resultDiv.classList.add("show");
-    document.body.className = "";
-    return;
-  }
+// ================= CLOCK =================
+setInterval(() => {
+    clock.innerText = new Date().toLocaleString();
+}, 1000);
 
-  fetch(url)
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error("City not found");
-      }
-      return response.json();
-    })
-    .then((data) => {
-      const forecast = data.list[0]; // First 3-hour forecast
-      const weatherMain = forecast.weather[0].main.toLowerCase();
-      const weatherDesc = forecast.weather[0].description;
-      const temperature = forecast.main.temp;
-      const humidity = forecast.main.humidity;
-      const rainVolume = forecast.rain && forecast.rain["3h"] ? forecast.rain["3h"] : 0;
+// ================= GREETING =================
+function setGreeting() {
+    const hour = new Date().getHours();
+    if (hour < 12) greeting.innerText = "Good Morning 🌞";
+    else if (hour < 18) greeting.innerText = "Good Afternoon ☀️";
+    else greeting.innerText = "Good Evening 🌙";
+}
+setGreeting();
 
-      let interpretedWeather = "Unknown";
-      if (rainVolume > 0 || weatherDesc.includes("rain") || weatherDesc.includes("shower")) {
-        interpretedWeather = "Rainy";
-      } else if (weatherDesc.includes("clear")) {
-        interpretedWeather = "Clear";
-      } else if (weatherDesc.includes("cloud")) {
-        interpretedWeather = "Cloudy";
-      } else if (weatherDesc.includes("snow")) {
-        interpretedWeather = "Snowy";
-      } else if (weatherDesc.includes("mist") || weatherDesc.includes("fog")) {
-        interpretedWeather = "Misty";
-      }
+// ================= WEATHER =================
+function getWeather(cityOverride) {
+    const city = cityOverride || document.getElementById("cityInput").value.trim();
+    if (!city) return;
 
-      const weatherIcons = {
-        clear: "☀️",
-        clouds: "☁️",
-        rain: "🌧️",
-        drizzle: "🌦️",
-        thunderstorm: "⛈️",
-        snow: "❄️",
-        mist: "🌫️"
-      };
+    loading.style.display = "block";
 
-      const icon = weatherIcons[weatherMain] || "🌡️";
-      document.body.className = weatherMain;
+    const url = `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${apiKey}&units=metric`;
 
-      resultDiv.innerHTML = `
-        <h2>${icon} ${data.city.name}, ${data.city.country}</h2>
-        <p>Forecast in next 3 hours:</p>
-        <p>Temperature: ${temperature}°C</p>
-        <p>Humidity: ${humidity}%</p>
-        <p>Weather: ${interpretedWeather} (${weatherDesc})</p>
-        <p>Rain volume: ${rainVolume} mm</p>
-        <p>Last updated: ${new Date().toLocaleTimeString()}</p>
-      `;
-      resultDiv.classList.remove("show");
-      setTimeout(() => resultDiv.classList.add("show"), 10);
-    })
-    .catch((error) => {
-      document.body.className = "";
-      resultDiv.innerHTML = `<p style="color:red;">${error.message}</p>`;
-      resultDiv.classList.add("show");
+    fetch(url)
+        .then(res => res.json())
+        .then(data => {
+
+            loading.style.display = "none";
+
+            const current = data.list[0];
+
+            const iconCode = current.weather[0].icon;
+            const iconUrl = `https://openweathermap.org/img/wn/${iconCode}@2x.png`;
+
+            const sunrise = new Date(data.city.sunrise * 1000);
+            const sunset = new Date(data.city.sunset * 1000);
+
+            // MAIN WEATHER CARD
+            weatherResult.innerHTML = `
+                <h2>📍 ${data.city.name}, ${data.city.country}</h2>
+                <img src="${iconUrl}">
+                <h2>${current.main.temp}°C</h2>
+                <p>${current.weather[0].description}</p>
+
+                <div class="cards">
+                    <div>🌡 ${current.main.feels_like}°C <br>Feels Like</div>
+                    <div>💧 ${current.main.humidity}% <br>Humidity</div>
+                    <div>🌬 ${current.wind.speed} km/h <br>Wind</div>
+                    <div>🔵 ${current.main.pressure} hPa <br>Pressure</div>
+                </div>
+
+                <div class="sun">
+                    🌅 ${sunrise.toLocaleTimeString()} <br>
+                    🌇 ${sunset.toLocaleTimeString()}
+                </div>
+            `;
+
+            // TIP SYSTEM
+            generateTip(current.weather[0].main);
+
+            // 5 DAY FORECAST
+            generateForecast(data.list);
+
+            // HISTORY
+            saveHistory(data.city.name);
+
+        })
+        .catch(() => {
+            weatherResult.innerHTML = "😥 City not found";
+            loading.style.display = "none";
+        });
+}
+
+// ================= FORECAST =================
+function generateForecast(list) {
+    forecastDiv.innerHTML = "<h3>📅 5-Day Forecast</h3>";
+
+    for (let i = 0; i < list.length; i += 8) {
+        const item = list[i];
+
+        const icon = item.weather[0].icon;
+        const iconUrl = `https://openweathermap.org/img/wn/${icon}.png`;
+
+        const date = new Date(item.dt * 1000).toDateString();
+
+        forecastDiv.innerHTML += `
+            <div class="forecast-card">
+                <p>${date}</p>
+                <img src="${iconUrl}">
+                <p>${item.main.temp}°C</p>
+            </div>
+        `;
+    }
+}
+
+// ================= LOCATION =================
+function getLocation() {
+    navigator.geolocation.getCurrentPosition(pos => {
+
+        const lat = pos.coords.latitude;
+        const lon = pos.coords.longitude;
+
+        const url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric`;
+
+        fetch(url)
+            .then(res => res.json())
+            .then(data => {
+                getWeather(data.name);
+            });
+
     });
 }
 
-document.getElementById("cityInput").addEventListener("keypress", function(e) {
-  if (e.key === "Enter") {
-    getWeather();
-  }
-});
+// ================= TIP SYSTEM =================
+function generateTip(type) {
+    let message = "";
 
-window.onload = () => {
-  document.getElementById("cityInput").focus();
-};
+    if (type === "Rain") message = "☔ Bring umbrella";
+    else if (type === "Clouds") message = "☁ Cloudy vibes today";
+    else if (type === "Clear") message = "😎 Sunny day!";
+    else if (type === "Thunderstorm") message = "⚡ Stay indoors";
+    else message = "🌤 Have a nice day!";
+
+    tip.innerText = message;
+}
+
+// ================= HISTORY =================
+function saveHistory(city) {
+    let history = JSON.parse(localStorage.getItem("history") || "[]");
+
+    history.unshift(city);
+    history = [...new Set(history)].slice(0, 5);
+
+    localStorage.setItem("history", JSON.stringify(history));
+
+    renderHistory();
+}
+
+function renderHistory() {
+    let history = JSON.parse(localStorage.getItem("history") || "[]");
+
+    historyList.innerHTML = history
+        .map(c => `<li onclick="getWeather('${c}')">📍 ${c}</li>`)
+        .join("");
+}
+
+// ================= FAVORITES =================
+function addFavorite(city) {
+    let fav = JSON.parse(localStorage.getItem("fav") || "[]");
+
+    fav.push(city);
+    fav = [...new Set(fav)];
+
+    localStorage.setItem("fav", JSON.stringify(fav));
+
+    renderFav();
+}
+
+function renderFav() {
+    let fav = JSON.parse(localStorage.getItem("fav") || "[]");
+
+    favoriteList.innerHTML = fav
+        .map(c => `<li onclick="getWeather('${c}')">⭐ ${c}</li>`)
+        .join("");
+}
+
+// INIT
+renderHistory();
+renderFav();
