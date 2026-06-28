@@ -50,12 +50,6 @@ button:hover {
   background-color: #f6f3f4;
 }
 
-fieldset (
-display: block;
-text-align: left;
-
-}
-
 #weatherResult {
   margin-top: 20px;
   font-size: 1rem;
