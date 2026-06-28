@@ -11,12 +11,6 @@ function getWeather() {
     document.body.className = "";
     return;
   }
-
-<div class="box">💧 Humidity<br><b id="humidity">--</b></div>
-        <div class="box">🌬 Wind<br><b id="wind">--</b></div>
-        <div class="box">🌡 Feels<br><b id="feels">--</b></div>
-        <div class="box">👁 Visibility<br><b id="visibility">--</b></div>
-
   
   fetch(url)
     .then((response) => {
