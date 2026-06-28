@@ -1,5 +1,5 @@
 # 🌤️ SkyCast Weather App
-A weather app built using **HTML**, **CSS**, and **JavaScript**, powered by the **OpenWeatherMap API**. This project lets users search for any city/country and get real-time weather data. This was created by 2nd year BSCS college student. 
+A weather app built using **HTML**, **CSS**, and **JavaScript**, powered by the **OpenWeatherMap API**. This project lets users search for any city/country and get real-time weather data. Built by a 2nd year BSCS college student. 
 
 ---
 
