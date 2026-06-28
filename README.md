@@ -4,7 +4,7 @@ A weather app built using **HTML**, **CSS**, and **JavaScript**, powered by the 
 ---
 
 ##  Live Demo
-👉 [Click here to view the live site](https://faith-umali.github.io/SkyCast-Weather-App-/)
+👉 [Click here to view the live site](https://faith-umali.github.io/SkyCast-Weather-App/)
 
 ---
 
