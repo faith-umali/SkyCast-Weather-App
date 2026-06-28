@@ -1,203 +1,96 @@
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:'Poppins',sans-serif;
+body {
+  font-family: 'Poppins', sans-serif;
+  text-align: center;
+  transition: background 0.5s ease;
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background-color: #f5115d;
 }
 
-body{
-min-height:100vh;
-color:white;
-display:flex;
-justify-content:center;
-align-items:center;
-flex-direction:column;
-background:linear-gradient(120deg,#1e3a8a,#0f172a);
-transition:0.5s ease;
-overflow-x:hidden;
+.container {
+  padding: 40px;
+  background-color: rgba(255, 255, 255, 0.95);
+  max-width: 420px;
+  margin: 40px auto;
+  border-radius: 20px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+  backdrop-filter: blur(8px);
 }
 
-/* animated background glow */
-.bg{
-position:fixed;
-width:100%;
-height:100%;
-top:0;
-left:0;
-z-index:-1;
-background:radial-gradient(circle at top,#3b82f6,transparent),
-radial-gradient(circle at bottom,#9333ea,transparent);
-opacity:0.4;
-animation:floatBg 8s infinite alternate;
+h1 {
+  font-size: 2rem;
+  color: #333333;
+  margin-bottom: 20px;
 }
 
-@keyframes floatBg{
-from{transform:scale(1);}
-to{transform:scale(1.1);}
+input, button {
+  padding: 12px;
+  margin: 10px 5px;
+  border-radius: 12px;
+  border: 1px solid #ddd;
+  width: 80%;
+  font-size: 1rem;
 }
 
-.container{
-width:90%;
-max-width:500px;
-padding:20px;
-margin-top:20px;
-background:rgba(255,255,255,0.08);
-backdrop-filter:blur(25px);
-border:1px solid rgba(255,255,255,0.15);
-border-radius:20px;
-box-shadow:0 10px 40px rgba(0,0,0,0.4);
+button {
+  background-color:#333333;
+  color:white ;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  width: auto;
+  padding: 10px 20px;
 }
 
-/* HEADER */
-.header{
-display:flex;
-justify-content:space-between;
-align-items:center;
+button:hover {
+  background-color: #f6f3f4;
 }
 
-.header h1{
-font-size:24px;
+#weatherResult {
+  margin-top: 20px;
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #333333;
+  opacity: 0;
+  transition: opacity 0.5s ease;
 }
 
-/* SEARCH */
-.search{
-margin-top:15px;
-display:flex;
-flex-direction:column;
-gap:10px;
+#weatherResult.show {
+  opacity: 1;
 }
 
-.search input{
-padding:12px;
-border:none;
-border-radius:12px;
-outline:none;
-font-size:16px;
+footer {
+  margin-top: auto;
+  padding: 20px;
+  font-size: 0.9rem;
+  color: #888888;
 }
 
-button{
-padding:10px;
-border:none;
-border-radius:12px;
-cursor:pointer;
-font-weight:bold;
-transition:0.3s;
-background:#3b82f6;
-color:white;
+/* Weather-based backgrounds */
+.clear {
+  background: linear-gradient(to top, #f9d423, #ff4e50);
 }
 
-button:hover{
-transform:scale(1.05);
-background:#2563eb;
+.clouds {
+  background: linear-gradient(to top, #bdc3c7, #2c3e50);
 }
 
-/* WEATHER BOX */
-#weatherResult{
-margin-top:20px;
-padding:15px;
-background:rgba(255,255,255,0.1);
-border-radius:15px;
-backdrop-filter:blur(20px);
-animation:fadeIn 0.5s ease;
+.rain, .drizzle {
+  background: linear-gradient(to top, #4e54c8, #8f94fb);
 }
 
-@keyframes fadeIn{
-from{opacity:0; transform:translateY(10px);}
-to{opacity:1; transform:translateY(0);}
+.thunderstorm {
+  background: linear-gradient(to top, #141e30, #243b55);
 }
 
-/* WEATHER CARDS */
-.cards{
-display:grid;
-grid-template-columns:repeat(2,1fr);
-gap:10px;
-margin-top:15px;
+.snow {
+  background: linear-gradient(to top, #e6dada, #274046);
 }
 
-.cards div{
-background:rgba(255,255,255,0.1);
-padding:10px;
-border-radius:12px;
-text-align:center;
-font-size:14px;
-}
-
-/* SUN */
-.sun{
-margin-top:10px;
-font-size:14px;
-}
-
-/* FORECAST */
-#forecast{
-margin-top:20px;
-}
-
-.forecast-card{
-display:flex;
-justify-content:space-between;
-align-items:center;
-background:rgba(255,255,255,0.1);
-padding:10px;
-margin-top:10px;
-border-radius:12px;
-}
-
-/* EXTRAS */
-.extras{
-display:flex;
-gap:10px;
-margin-top:20px;
-}
-
-.extras div{
-flex:1;
-background:rgba(255,255,255,0.1);
-padding:10px;
-border-radius:12px;
-}
-
-/* LISTS */
-ul{
-list-style:none;
-padding:0;
-}
-
-li{
-padding:5px;
-cursor:pointer;
-transition:0.3s;
-}
-
-li:hover{
-color:#60a5fa;
-transform:translateX(5px);
-}
-
-/* TIP */
-.tip{
-margin-top:20px;
-padding:12px;
-background:rgba(255,255,255,0.1);
-border-radius:12px;
-text-align:center;
-}
-
-/* CLOCK */
-#clock{
-margin-top:10px;
-font-size:14px;
-opacity:0.8;
-}
-
-/* LOADING */
-#loading{
-display:none;
-margin-top:10px;
-}
-
-/* DARK MODE */
-.dark{
-background:#0a0a0a !important;
-color:white;
+.mist {
+  background: linear-gradient(to top, #d3cce3, #e9e4f0);
 }
